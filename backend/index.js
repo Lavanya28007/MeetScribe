@@ -1,15 +1,21 @@
 const express= require('express');
 const app = express();
 const cors = require('cors');
-const UserRouter = require('./routers/UserRouter');
 require('dotenv').config();
+
+const UserRouter = require('./routers/UserRouter');
+// const SumRouter = require('./routers/SumRouter');
+const aiRouter = require('./routers/aiRouter');
 const PORT = process.env.PORT || 5000;
 
 app.use(cors({
-    origin:['http://localhost:3000']
+    origin:'*'
 }));
+
 app.use(express.json()); // to parse json bodies
 app.use('/user', UserRouter);
+// app.use('/sum', SumRouter);
+app.use('/api/ai', aiRouter);
 
 
 
