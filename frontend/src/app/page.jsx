@@ -126,28 +126,6 @@ const HomePage = () => {
         </button>
       </section>
 
-      {/* FOOTER */}
-      <footer className="bg-dark text-gray-300 px-20 py-10 grid grid-cols-4 gap-8">
-        <div>
-          <h3 className="text-white font-semibold">MeeTscribe</h3>
-          <p className="text-sm mt-2">
-            AI-powered meeting transcription & documentation.
-          </p>
-        </div>
-        <div>
-          <h4 className="text-white">Links</h4>
-          <p className="mt-2">Features</p>
-          <p>Use Cases</p>
-        </div>
-        <div>
-          <h4 className="text-white">GitHub</h4>
-          <p className="mt-2">Project Repository</p>
-        </div>
-        <div>
-          <h4 className="text-white">Contact</h4>
-          <p className="mt-2">meetscribe@email.com</p>
-        </div>
-      </footer>
 
     </div>
   );

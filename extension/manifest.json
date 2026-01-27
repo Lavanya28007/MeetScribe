@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "MeetScibe",
+  "version": "1.0",
+  "description": "Summarize your Google Meet calls with AI-powered transcription and notes.",
+  "permissions":["activeTab", "scripting", "storage"],
+  "host_permissions": ["https://meet.google.com/*"],
+  "background": { "service_worker": "background.js"},
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://meet.google.com/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "icons": {
+    "128": "icon.jpg"
+  }
+}

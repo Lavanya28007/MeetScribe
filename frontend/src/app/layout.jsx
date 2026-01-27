@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "MeetScribeAI",
+  title: "MeetScribe",
   description: "AI-Powered Meeting Transcription and Summarization Tool",
 };
 
