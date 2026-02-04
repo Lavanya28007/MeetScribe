@@ -114,7 +114,9 @@
 
     <button id="summarize">Summarize Meeting</button>
     <button id="actions">Get Action Items</button>
-    <button id="document">Generate Document</button>
+
+    <label for="transcript" style="display:block;margin:8px 0 4px;color:var(--muted);font-size:12px;">Transcript (paste or leave empty to fetch from tab)</label>
+    <textarea id="transcript" rows="6" style="width:100%;padding:8px;border-radius:6px;border:none;background:var(--card);color:var(--text);resize:vertical;font-size:12px;"> </textarea>
 
     <div class="spinner" id="spinner"></div>
     <pre id="output">Ready when you are.</pre>

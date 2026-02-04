@@ -12,12 +12,11 @@ app.use(cors({
     origin:'*'
 }));
 
-app.use(express.json()); // to parse json bodies
+app.use(express.json({ limit: "2mb" }));
+app.use(express.urlencoded({ extended: true, limit: "2mb" }));
 app.use('/user', UserRouter);
 // app.use('/sum', SumRouter);
 app.use('/api/ai', aiRouter);
-
-
 
 
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));

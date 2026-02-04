@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const generate = require("../gemini");
+const Summary = require("../models/SummaryModel");
 
 /* ──────────────────── Utilities ──────────────────── */
 
@@ -20,66 +21,7 @@ const withTimeout = (promise, ms = 20000) =>
     )
   ]);
 
-/* ──────────────────── /generate-docs ──────────────────── */
 
-router.post("/generate-docs", async (req, res) => {
-  try {
-    console.log("📥 MeetScribe Docs HIT");
-
-    const {
-      projectName = "MeetScribe",
-      description = "A Chrome extension that generates AI-powered summaries from meeting transcripts.",
-      features,
-      techStack,
-      apis
-    } = req.body;
-
-    const prompt = `
-You are a senior frontend and AI engineer.
-
-Generate professional Markdown documentation for a Chrome Extension.
-
-## Extension Name
-${projectName}
-
-## Description
-${description}
-
-## Key Features
-${normalize(ensureArray(features))}
-
-## Tech Stack
-${normalize(ensureArray(techStack))}
-
-## APIs & AI Services
-${normalize(ensureArray(apis))}
-
-Include:
-1. README Overview
-2. Chrome Extension Architecture
-3. Installation
-4. How to Use
-5. Permissions Explained
-6. AI Workflow
-7. Folder Structure
-8. Future Enhancements
-
-Keep it concise, professional, and Chrome Web Store review-safe.
-`;
-
-    const documentation = await withTimeout(generate(prompt));
-
-    res.status(200).json({
-      type: "documentation",
-      format: "markdown",
-      output: documentation.trim()
-    });
-
-  } catch (error) {
-    console.error("❌ Docs Error:", error.message);
-    res.status(500).json({ error: error.message });
-  }
-});
 
 /* ──────────────────── /summarize ──────────────────── */
 
@@ -87,7 +29,7 @@ router.post("/summarize", async (req, res) => {
   try {
     console.log("📥 MeetScribe Summarize HIT");
 
-    const { transcript } = req.body;
+    const { meetingTitle = "Untitled Meeting", transcript } = req.body;
 
     if (!transcript || transcript.trim().length < 50) {
       return res.status(400).json({
@@ -97,6 +39,13 @@ router.post("/summarize", async (req, res) => {
 
     const prompt = `
 You are an AI meeting assistant.
+
+Rules:
+- Do NOT repeat the transcript
+- Merge repeated statements
+- Summarize unique ideas only
+- Ignore filler, greetings, or repeated phrases
+
 
 Summarize the following meeting transcript into:
 
@@ -115,11 +64,20 @@ ${transcript}
 """
 `;
 
-    const summary = await withTimeout(generate(prompt));
+    const summaryOutput = await withTimeout(generate(prompt));
+
+    // 🔹 Save to DB
+    const savedSummary = await Summary.create({
+      meetingTitle,
+      transcript,
+      summary: summaryOutput.trim(),
+      actionItems: [] // will be updated later
+    });
 
     res.status(200).json({
       type: "summary",
-      output: summary.trim()
+      summaryId: savedSummary._id, // IMPORTANT
+      output: savedSummary.summary
     });
 
   } catch (error) {
@@ -127,6 +85,11 @@ ${transcript}
     res.status(500).json({ error: error.message });
   }
 });
+router.get("/summaries", async (req, res) => {
+  const summaries = await Summary.find().sort({ createdAt: -1 });
+  res.json(summaries);
+});
+
 
 /* ──────────────────── /action-items ──────────────────── */
 
@@ -134,7 +97,13 @@ router.post("/action-items", async (req, res) => {
   try {
     console.log("📥 MeetScribe Action Items HIT");
 
-    const { transcript } = req.body;
+    const { transcript, summaryId } = req.body;
+
+    if (!summaryId) {
+      return res.status(400).json({
+        error: "summaryId is required to attach action items"
+      });
+    }
 
     if (!transcript || transcript.trim().length < 50) {
       return res.status(400).json({
@@ -159,13 +128,26 @@ Transcript:
 ${transcript}
 """
 `;
- // Call Gemini with timeout protection
-    const actions = await withTimeout(generate(prompt));
+
+    const actionsOutput = await withTimeout(generate(prompt));
+
+    // Simple parsing: split markdown bullets
+    const actionItems = actionsOutput
+      .split("\n")
+      .filter(line => line.trim().startsWith("-"))
+      .map(line => line.replace(/^-\s*/, ""));
+
+    // 🔹 Update DB
+    const updatedSummary = await Summary.findByIdAndUpdate(
+      summaryId,
+      { actionItems },
+      { new: true }
+    );
 
     res.status(200).json({
       type: "action-items",
-      format: "markdown",
-      output: actions.trim()
+      summaryId,
+      output: actionsOutput.trim()
     });
 
   } catch (error) {
@@ -173,5 +155,6 @@ ${transcript}
     res.status(500).json({ error: error.message });
   }
 });
+
 
 module.exports = router;
