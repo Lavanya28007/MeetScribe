@@ -3,7 +3,6 @@
   <head>
     <meta charset="UTF-8" />
     <title>MeetScribe</title>
-
     <style>
       :root {
         --bg: #0f1115;
@@ -11,115 +10,114 @@
         --text: #eaeaea;
         --muted: #9aa0a6;
         --accent: #ff7a33;
-        --success: #2ecc71;
         --error: #e74c3c;
       }
 
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+
       body {
-        width: 320px;
-        margin: 0;
-        padding: 16px;
+        width: 340px;
         font-family: "Segoe UI", system-ui, sans-serif;
         background: var(--bg);
         color: var(--text);
+        padding: 16px;
       }
 
       h2 {
         text-align: center;
-        color: var(--accent);
+        font-size: 20px;
+        font-weight: 600;
         margin-bottom: 14px;
       }
+      h2 span { color: var(--accent); }
 
       button {
         width: 100%;
-        padding: 11px;
-        margin-bottom: 10px;
+        padding: 10px;
+        margin-bottom: 8px;
         background: var(--card);
         color: var(--text);
         border: none;
         border-radius: 8px;
         cursor: pointer;
+        font-size: 13px;
+      }
+      button:disabled { opacity: 0.5; cursor: not-allowed; }
+      button:hover:not(:disabled) { background: var(--accent); color: #000; }
+
+      .btn-row { display: flex; gap: 8px; margin-bottom: 8px; }
+      .btn-row button { margin-bottom: 0; }
+      button.secondary {
+        background: transparent;
+        border: 1px solid #2a2f3a;
+        color: var(--muted);
+      }
+      button.secondary:hover { background: #1e2229; color: var(--text); }
+
+      label {
+        display: block;
+        font-size: 11px;
+        color: var(--muted);
+        margin: 10px 0 4px;
       }
 
-      button:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
+      textarea {
+        width: 100%; padding: 8px;
+        border-radius: 6px; border: 1px solid #2a2f3a;
+        background: var(--card); color: var(--text);
+        resize: vertical; font-size: 12px; outline: none;
       }
-
-      button:hover:not(:disabled) {
-        background: var(--accent);
-        color: #000;
-      }
+      textarea:focus { border-color: var(--accent); }
 
       .spinner {
         display: none;
-        width: 28px;
-        height: 28px;
-        margin: 10px auto;
+        width: 24px; height: 24px;
+        margin: 8px auto;
         border: 3px solid var(--card);
         border-top: 3px solid var(--accent);
         border-radius: 50%;
-        animation: spin 1s linear infinite;
+        animation: spin 0.9s linear infinite;
       }
+      @keyframes spin { to { transform: rotate(360deg); } }
 
-      @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
-      }
-
-      pre {
+      #output-box {
         background: var(--card);
-        padding: 10px;
+        padding: 10px 12px;
         border-radius: 8px;
-        max-height: 150px;
+        max-height: 200px;
         overflow-y: auto;
         font-size: 12px;
         color: var(--muted);
+        line-height: 1.6;
+        margin-top: 8px;
       }
-
-      /* Toasts */
-      .toast {
-        position: fixed;
-        bottom: 16px;
-        left: 50%;
-        transform: translateX(-50%);
-        padding: 10px 14px;
-        border-radius: 6px;
-        font-size: 13px;
-        color: #000;
-        animation: fadeInOut 3s forwards;
+      #output-box h2 {
+        font-size: 12px; font-weight: 600;
+        color: var(--accent); margin: 8px 0 3px;
+        text-align: left;
       }
-
-      .toast.success {
-        background: var(--success);
-      }
-
-      .toast.error {
-        background: var(--error);
-        color: #fff;
-      }
-
-      @keyframes fadeInOut {
-        0% { opacity: 0; transform: translate(-50%, 10px); }
-        10% { opacity: 1; transform: translate(-50%, 0); }
-        90% { opacity: 1; }
-        100% { opacity: 0; }
-      }
+      #output-box h2:first-child { margin-top: 0; }
+      #output-box ul { margin: 0 0 4px; padding-left: 14px; }
+      #output-box li { margin-bottom: 2px; color: var(--text); }
+      #output-box p { margin: 0 0 4px; color: var(--text); }
     </style>
   </head>
-
   <body>
-    <h2>MeetScribe</h2>
 
-    <button id="summarize">Summarize Meeting</button>
-    <button id="actions">Get Action Items</button>
+    <h2>Meet<span>Scribe</span></h2>
 
-    <label for="transcript" style="display:block;margin:8px 0 4px;color:var(--muted);font-size:12px;">Transcript (paste or leave empty to fetch from tab)</label>
-    <textarea id="transcript" rows="6" style="width:100%;padding:8px;border-radius:6px;border:none;background:var(--card);color:var(--text);resize:vertical;font-size:12px;"> </textarea>
+    <div class="btn-row">
+      <button id="summarize">Summarize Meeting</button>
+      <button id="actions">Action Items</button>
+    </div>
+
+    <button class="secondary" id="btn-history" style="font-size:12px">📋 View History</button>
+
+    <label for="transcript">Transcript (paste or leave empty to fetch from tab)</label>
+    <textarea id="transcript" rows="3"></textarea>
 
     <div class="spinner" id="spinner"></div>
-    <pre id="output">Ready when you are.</pre>
+    <div id="output-box">Ready when you are.</div>
 
     <script src="popup.js"></script>
   </body>

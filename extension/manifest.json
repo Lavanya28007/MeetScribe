@@ -1,21 +1,44 @@
 {
   "manifest_version": 3,
-  "name": "MeetScibe",
+  "name": "MeetScribe",
   "version": "1.0",
   "description": "Summarize your Google Meet calls with AI-powered transcription and notes.",
-  "permissions":["activeTab", "scripting", "storage"],
-  "host_permissions": ["https://meet.google.com/*"],
-  "background": { "service_worker": "background.js"},
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://meet.google.com/*",
+    "http://localhost:3000/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
   "action": {
     "default_popup": "popup.html"
   },
   "content_scripts": [
     {
       "matches": ["https://meet.google.com/*"],
-      "js": ["content.js"]
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["http://localhost:3000/*"],
+      "js": ["authSync.js"],
+      "run_at": "document_idle",
+      "world": "MAIN"
+    },
+    {
+      "matches": ["http://localhost:3000/*"],
+      "js": ["authBridge.js"],
+      "run_at": "document_idle",
+      "world": "ISOLATED"
     }
   ],
   "icons": {
-    "128": "icon.jpg"
+    "128": "icon.png"
   }
 }
