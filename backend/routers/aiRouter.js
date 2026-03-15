@@ -2,17 +2,25 @@ const express = require("express");
 const router = express.Router();
 const generate = require("../gemini");
 const Summary = require("../models/SummaryModel");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
+
+/* ──────────────────── Optional Auth ──────────────────── */
+// Attaches req.user if a valid token is present, but never blocks the request
+const optionalAuth = (req, res, next) => {
+  const auth = req.headers.authorization;
+  if (auth && auth.startsWith("Bearer ")) {
+    try {
+      req.user = jwt.verify(auth.split(" ")[1], process.env.JWT_SECRET);
+    } catch {
+      // invalid token — just ignore, proceed without user
+    }
+  }
+  next();
+};
 
 /* ──────────────────── Utilities ──────────────────── */
 
-// Ensure array input
-const ensureArray = (value) => (Array.isArray(value) ? value : []);
-
-// Normalize array into markdown bullets
-const normalize = (arr) =>
-  arr.length ? arr.map(v => `- ${v}`).join("\n") : "- Not specified";
-
-// AI timeout protection
 const withTimeout = (promise, ms = 20000) =>
   Promise.race([
     promise,
@@ -21,62 +29,60 @@ const withTimeout = (promise, ms = 20000) =>
     )
   ]);
 
-
-
 /* ──────────────────── /summarize ──────────────────── */
 
-router.post("/summarize", async (req, res) => {
+router.post("/summarize", optionalAuth, async (req, res) => {
   try {
-    console.log("📥 MeetScribe Summarize HIT");
+    console.log("📥 Summarize HIT — user:", req.user?._id || "anonymous");
 
     const { meetingTitle = "Untitled Meeting", transcript } = req.body;
 
     if (!transcript || transcript.trim().length < 50) {
-      return res.status(400).json({
-        error: "Transcript too short or missing"
-      });
+      return res.status(400).json({ error: "Transcript too short or missing" });
     }
+
+    const cleanTranscript = transcript.slice(0, 12000);
 
     const prompt = `
 You are an AI meeting assistant.
 
-Rules:
-- Do NOT repeat the transcript
-- Merge repeated statements
-- Summarize unique ideas only
-- Ignore filler, greetings, or repeated phrases
+Your job:
+1. Remove repeated phrases caused by speech recognition.
+2. Merge similar sentences into one idea.
+3. Ignore filler words.
+4. Extract only meaningful discussion.
 
-
-Summarize the following meeting transcript into:
+Provide output in:
 
 ## Summary
 - Key discussion points
 
 ## Decisions
-- Clear decisions made (if any)
+- Decisions made (if any)
 
 ## Action Items
-- Bullet list of tasks with responsible parties if mentioned
+- Tasks with owners if mentioned
 
 Transcript:
 """
-${transcript}
+${cleanTranscript}
 """
 `;
 
     const summaryOutput = await withTimeout(generate(prompt));
+    if (!summaryOutput) throw new Error("AI returned empty response");
 
-    // 🔹 Save to DB
     const savedSummary = await Summary.create({
       meetingTitle,
       transcript,
       summary: summaryOutput.trim(),
-      actionItems: [] // will be updated later
+      userId: req.user?._id || null,   // save userId if logged in, null otherwise
+      actionItems: []
     });
 
     res.status(200).json({
       type: "summary",
-      summaryId: savedSummary._id, // IMPORTANT
+      summaryId: savedSummary._id,
       output: savedSummary.summary
     });
 
@@ -85,31 +91,23 @@ ${transcript}
     res.status(500).json({ error: error.message });
   }
 });
-router.get("/summaries", async (req, res) => {
-  const summaries = await Summary.find().sort({ createdAt: -1 });
-  res.json(summaries);
-});
-
 
 /* ──────────────────── /action-items ──────────────────── */
 
-router.post("/action-items", async (req, res) => {
+router.post("/action-items", optionalAuth, async (req, res) => {
   try {
-    console.log("📥 MeetScribe Action Items HIT");
+    console.log("📥 Action Items HIT — user:", req.user?._id || "anonymous");
 
     const { transcript, summaryId } = req.body;
 
     if (!summaryId) {
-      return res.status(400).json({
-        error: "summaryId is required to attach action items"
-      });
+      return res.status(400).json({ error: "summaryId is required" });
+    }
+    if (!transcript || transcript.trim().length < 50) {
+      return res.status(400).json({ error: "Transcript too short or missing" });
     }
 
-    if (!transcript || transcript.trim().length < 50) {
-      return res.status(400).json({
-        error: "Transcript too short or missing"
-      });
-    }
+    const cleanTranscript = transcript.slice(0, 12000);
 
     const prompt = `
 You are an AI project manager.
@@ -125,24 +123,18 @@ Format as clean Markdown bullet points.
 
 Transcript:
 """
-${transcript}
+${cleanTranscript}
 """
 `;
 
     const actionsOutput = await withTimeout(generate(prompt));
 
-    // Simple parsing: split markdown bullets
     const actionItems = actionsOutput
       .split("\n")
       .filter(line => line.trim().startsWith("-"))
       .map(line => line.replace(/^-\s*/, ""));
 
-    // 🔹 Update DB
-    const updatedSummary = await Summary.findByIdAndUpdate(
-      summaryId,
-      { actionItems },
-      { new: true }
-    );
+    await Summary.findByIdAndUpdate(summaryId, { actionItems }, { new: true });
 
     res.status(200).json({
       type: "action-items",
@@ -156,5 +148,10 @@ ${transcript}
   }
 });
 
+/* ──────────────────── /summaries (all, for admin) ──────────────────── */
+router.get("/summaries", async (req, res) => {
+  const summaries = await Summary.find().sort({ createdAt: -1 });
+  res.json(summaries);
+});
 
 module.exports = router;

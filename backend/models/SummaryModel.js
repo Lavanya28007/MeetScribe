@@ -2,32 +2,17 @@ const {Schema, model} = require('../connection');
 
 const SummarySchema = new Schema(
   {
-    meetingTitle: {
-      type: String,
-      required: true,
-      trim: true
+    meetingTitle: { type: String, required: true, trim: true },
+    transcript: { type: String, required: true },
+    summary: { type: String, required: true },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "users",
+      default: null       // optional — null for anonymous extension use
     },
-    transcript: {
-      type: String,
-      required: true
-    },
-    summary: {
-      type: String,
-      required: true
-    },
-  //   userId: {
-  //   type: Schema.Types.ObjectId,
-  //   ref: "User"
-  //  },
-
-    actionItems: {
-      type: [String],
-      default: []
-    }
+    actionItems: { type: [String], default: [] }
   },
-  {
-    timestamps: true // adds createdAt & updatedAt automatically
-  }
+  { timestamps: true }
 );
 
 module.exports = model("Summary", SummarySchema);
