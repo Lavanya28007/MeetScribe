@@ -2,136 +2,246 @@ import React from 'react'
 
 const HomePage = () => {
   return (
-    <div className="bg-base text-dark">
-
+    <div className="bg-[#0f0f0f] text-white min-h-screen font-sans">
 
       {/* HERO */}
-      <section className="grid grid-cols-2 gap-10 px-20 py-20">
+      <section className="grid grid-cols-2 gap-10 px-20 py-20 items-center">
+
+        {/* LEFT */}
         <div>
-          <span className="border border-primary text-primary px-4 py-1 rounded-full text-sm">
+          <span className="inline-flex items-center gap-2 border border-orange-500 text-orange-400 bg-orange-500/10 px-4 py-1.5 rounded-full text-xs font-semibold tracking-widest uppercase">
+            <span className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-pulse" />
             AI-Powered Meeting Documentation
           </span>
 
-          <h1 className="text-5xl font-semibold mt-6 leading-tight">
+          <h1 className="text-6xl font-black mt-8 leading-[1.05] tracking-tight">
             Turn Meetings into <br />
-            <span className="text-primary">Clear, Actionable Notes</span>
+            <span className="text-orange-500">Clear, Actionable Notes</span>
           </h1>
 
-          <p className="text-muted mt-6 max-w-md">
+          <p className="text-zinc-400 mt-6 max-w-md leading-relaxed text-base">
             MeeTscribe transcribes meetings, summarizes discussions, and generates
             professional documentation automatically.
           </p>
 
-          <div className="mt-8 flex gap-4">
-            <button className="bg-primary text-white px-6 py-3 rounded-lg">
-              Get Started Free
+          <div className="mt-10 flex gap-4">
+            <button className="bg-orange-500 hover:bg-orange-400 text-black font-bold px-7 py-3.5 rounded-xl text-sm transition-all hover:-translate-y-0.5 shadow-lg shadow-orange-500/30">
+              Get Started Free →
             </button>
-            <button className="border border-primary text-primary px-6 py-3 rounded-lg">
-              View Demo
+            <button className="border border-zinc-700 text-zinc-300 hover:border-zinc-500 hover:text-white px-7 py-3.5 rounded-xl text-sm font-semibold transition-all">
+              ▶ View Demo
             </button>
           </div>
         </div>
 
-        {/* MOCK DASHBOARD */}
-        <div className="bg-white rounded-2xl shadow-lg p-6">
-          <h3 className="font-medium mb-4">Live Transcript</h3>
-          <div className="space-y-3 text-sm text-muted">
-            <p>• Speaker 1: Project discussion started...</p>
-            <p>• Speaker 2: Timeline needs adjustment...</p>
-            <p>• Speaker 3: Action items assigned...</p>
+        {/* RIGHT — LIVE TRANSCRIPT PANEL */}
+        <div className="bg-[#181818] border border-zinc-800 rounded-2xl p-6 shadow-2xl">
+          <div className="flex items-center justify-between mb-5">
+            <span className="text-xs font-bold tracking-widest text-zinc-400 uppercase">Live Transcript</span>
+            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-orange-400 bg-orange-500/10 border border-orange-500/30 px-2.5 py-1 rounded-full">
+              <span className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-pulse" />
+              Recording
+            </span>
           </div>
 
-          <div className="mt-6 grid grid-cols-2 gap-4">
-            <div className="border border-border rounded-lg p-3">
-              <h4 className="font-medium">Key Summary</h4>
-              <p className="text-sm text-muted mt-2">
-                Main goals and decisions highlighted.
-              </p>
+          <div className="space-y-3">
+            {[
+              { initials: "S1", name: "Speaker 1", color: "bg-orange-500", text: "Project discussion started..." },
+              { initials: "S2", name: "Speaker 2", color: "bg-blue-500", text: "Timeline needs adjustment..." },
+              { initials: "S3", name: "Speaker 3", color: "bg-emerald-500", text: "Action items assigned..." },
+            ].map((item, i) => (
+              <div key={i} className="flex gap-3 bg-[#1f1f1f] border border-zinc-800 rounded-xl p-3.5">
+                <div className={`${item.color} w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0`}>
+                  {item.initials}
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-zinc-300">{item.name}</p>
+                  <p className="text-sm text-zinc-500 mt-0.5">{item.text}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-4 grid grid-cols-2 gap-3">
+            <div className="bg-[#1f1f1f] border border-zinc-800 rounded-xl p-4 hover:border-orange-500/40 transition-colors">
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="w-6 h-6 bg-orange-500/20 text-orange-400 rounded flex items-center justify-center text-xs">✦</span>
+                <h4 className="font-bold text-sm">Key Summary</h4>
+              </div>
+              <p className="text-xs text-zinc-500 leading-relaxed">Main goals and decisions highlighted.</p>
             </div>
-            <div className="border border-border rounded-lg p-3">
-              <h4 className="font-medium">Action Items</h4>
-              <p className="text-sm text-muted mt-2">
-                Tasks auto-generated by AI.
-              </p>
+            <div className="bg-[#1f1f1f] border border-zinc-800 rounded-xl p-4 hover:border-orange-500/40 transition-colors">
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="w-6 h-6 bg-orange-500/20 text-orange-400 rounded flex items-center justify-center text-xs">✓</span>
+                <h4 className="font-bold text-sm">Action Items</h4>
+              </div>
+              <p className="text-xs text-zinc-500 leading-relaxed">Tasks auto-generated by AI.</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* PROBLEMS */}
-      <section className="bg-[#F5F5F4] px-20 py-12 grid grid-cols-3 gap-6">
+      <section className="bg-[#141414] px-20 py-14 grid grid-cols-3 gap-5 border-t border-zinc-900">
         {[
-          "Manual note-taking is slow",
-          "Important points get missed",
-          "Documentation takes hours",
-        ].map((text, i) => (
-          <div key={i} className="bg-white p-6 rounded-xl shadow-sm">
-            <p className="font-medium">{text}</p>
+          { text: "Manual note-taking is slow", icon: "⏱", desc: "Professionals waste hours every week writing up what was said." },
+          { text: "Important points get missed", icon: "⚠️", desc: "Key decisions and action items buried in conversation vanish." },
+          { text: "Documentation takes hours", icon: "📄", desc: "Turning raw notes into polished docs takes time you don't have." },
+        ].map((item, i) => (
+          <div key={i} className="bg-[#1a1a1a] border border-zinc-800 p-7 rounded-2xl hover:border-orange-500/40 hover:-translate-y-1 transition-all">
+            <div className="text-3xl mb-4">{item.icon}</div>
+            <p className="font-bold text-base mb-2">{item.text}</p>
+            <p className="text-sm text-zinc-500 leading-relaxed">{item.desc}</p>
           </div>
         ))}
       </section>
 
       {/* FEATURES */}
-      <section className="px-20 py-20">
-        <h2 className="text-3xl font-semibold text-center mb-12">
-          Key Features
+      <section id="features" className="px-20 py-24 scroll-mt-20">
+        <p className="text-center text-xs font-bold tracking-widest text-orange-500 uppercase mb-4">What We Offer</p>
+        <h2 className="text-5xl font-black text-center mb-2 tracking-tight">
+          Everything your team needs,
+        </h2>
+        <h2 className="text-5xl font-black text-center mb-16 tracking-tight text-orange-500">
+          nothing you don't.
         </h2>
 
-        <div className="grid grid-cols-3 gap-8">
+        <div className="grid grid-cols-3 gap-5">
           {[
-            "Live Transcription",
-            "Smart Summaries",
-            "Auto Documentation",
-            "Multi-Language Support",
-            "Cloud Storage",
-            "Secure & Private",
+            { name: "Live Transcription", icon: "🎙️", tag: "→ CORE", desc: "Real-time, speaker-aware transcription with high accuracy across 40+ languages." },
+            { name: "Smart Summaries", icon: "💬", tag: "→ AI", desc: "GPT-powered extraction of key decisions, insights, and discussion themes — structured, not just summarized." },
+            { name: "Auto Documentation", icon: "📋", tag: "→ INTEGRATIONS", desc: "Instantly export polished meeting minutes to Google Docs, Notion, or Confluence in one click." },
+            { name: "Multi-Language Support", icon: "🌐", tag: "→ GLOBAL", desc: "Supports 40+ languages and accents for global teams." },
+            { name: "Cloud Storage", icon: "☁️", tag: "→ STORAGE", desc: "Securely store all your meeting recordings and transcripts in the cloud." },
+            { name: "Secure & Private", icon: "🔒", tag: "→ SECURITY", desc: "Enterprise-grade encryption keeps your meeting data safe and private." },
           ].map((feature, i) => (
             <div
               key={i}
-              className="bg-white border border-border rounded-xl p-6 hover:border-primary transition"
+              className="bg-[#1a1a1a] border border-zinc-800 rounded-2xl p-7 hover:border-orange-500/50 hover:-translate-y-1 transition-all"
             >
-              <h3 className="font-medium">{feature}</h3>
-              <p className="text-sm text-muted mt-2">
-                AI-powered feature to improve productivity.
-              </p>
+              <div className="text-3xl mb-5">{feature.icon}</div>
+              <h3 className="font-bold text-lg mb-3">{feature.name}</h3>
+              <p className="text-sm text-zinc-500 leading-relaxed mb-5">{feature.desc}</p>
+              <span className="text-xs font-bold text-orange-500 tracking-widest">{feature.tag}</span>
             </div>
           ))}
         </div>
       </section>
 
       {/* HOW IT WORKS */}
-      <section className="px-20 py-16 text-center">
-        <h2 className="text-3xl font-semibold mb-10">How It Works</h2>
-        <div className="flex justify-center gap-10">
-          {["Record", "AI Transcribes", "Get Summary", "Download"].map(
-            (step, i) => (
-              <div key={i}>
-                <div className="bg-primary text-white w-10 h-10 rounded-full flex items-center justify-center mx-auto">
+      <section id="how-it-works" className="px-20 py-24 text-center bg-[#141414] border-t border-zinc-900 scroll-mt-20">
+        <p className="text-xs font-bold tracking-widest text-orange-500 uppercase mb-4">How It Works</p>
+        <h2 className="text-5xl font-black mb-2 tracking-tight">Up and running in</h2>
+        <h2 className="text-5xl font-black mb-20 tracking-tight text-orange-500">under 60 seconds.</h2>
+
+        <div className="flex justify-center items-start gap-0">
+          {[
+            { step: "Record", icon: "🎙️", desc: "Connect via Zoom, Meet, Teams, or our web recorder." },
+            { step: "AI Transcribes", icon: "⚡", desc: "Real-time, speaker-attributed transcription begins instantly." },
+            { step: "Get Summary", icon: "✨", desc: "AI structures your notes, decisions, and action items." },
+            { step: "Download", icon: "📤", desc: "Export to your favorite tools in seconds." },
+          ].map((item, i, arr) => (
+            <React.Fragment key={i}>
+              <div className="flex flex-col items-center gap-4 w-44">
+                <div className="border-2 border-orange-500 text-orange-500 w-14 h-14 rounded-full flex items-center justify-center font-black text-xl">
                   {i + 1}
                 </div>
-                <p className="mt-3">{step}</p>
+                <div className="text-3xl">{item.icon}</div>
+                <p className="font-bold text-sm">{item.step}</p>
+                <p className="text-xs text-zinc-500 leading-relaxed">{item.desc}</p>
               </div>
-            )
-          )}
+              {i < arr.length - 1 && (
+                <div className="h-px w-16 bg-gradient-to-r from-orange-500/60 to-orange-500/10 mt-7 shrink-0" />
+              )}
+            </React.Fragment>
+          ))}
+        </div>
+      </section>
+
+      {/* USE CASES */}
+      <section id="use-cases" className="px-20 py-24 bg-[#0f0f0f] border-t border-zinc-900 scroll-mt-20">
+        <p className="text-center text-xs font-bold tracking-widest text-orange-500 uppercase mb-4">Who It's For</p>
+        <h2 className="text-5xl font-black text-center mb-2 tracking-tight">Built for every team</h2>
+        <h2 className="text-5xl font-black text-center mb-16 tracking-tight text-orange-500">that runs on meetings.</h2>
+
+        <div className="grid grid-cols-2 gap-6">
+          {[
+            {
+              role: "Product Teams",
+              icon: "🚀",
+              tag: "→ PRODUCT",
+              headline: "Ship faster with zero documentation lag.",
+              desc: "Auto-capture sprint planning decisions, feature discussions, and stakeholder feedback. Never lose a product requirement to a bad notes doc again.",
+              points: ["Sprint retrospective summaries", "Feature requirement capture", "Stakeholder alignment docs"],
+            },
+            {
+              role: "Sales Teams",
+              icon: "💼",
+              tag: "→ SALES",
+              headline: "Close more deals. Forget note-taking.",
+              desc: "Focus on the conversation. MeeTscribe logs every customer objection, commitment, and follow-up — then structures it into a CRM-ready summary.",
+              points: ["Call summaries & objection logs", "Auto follow-up action items", "Deal stage documentation"],
+            },
+            {
+              role: "Engineering Teams",
+              icon: "⚙️",
+              tag: "→ ENGINEERING",
+              headline: "Turn standups into structured updates.",
+              desc: "Convert daily standups, architecture reviews, and incident post-mortems into clean, searchable documentation your whole team can reference.",
+              points: ["Incident post-mortem reports", "Architecture decision records", "Standup digests"],
+            },
+            {
+              role: "Executive & Leadership",
+              icon: "🏛️",
+              tag: "→ LEADERSHIP",
+              headline: "Board-ready notes, automatically.",
+              desc: "From all-hands to board meetings — get concise, professional minutes with key decisions and action owners highlighted for every stakeholder.",
+              points: ["Board meeting minutes", "All-hands summaries", "OKR review documentation"],
+            },
+          ].map((uc, i) => (
+            <div
+              key={i}
+              className="bg-[#141414] border border-zinc-800 rounded-2xl p-8 hover:border-orange-500/50 hover:-translate-y-1 transition-all group"
+            >
+              <div className="flex items-start justify-between mb-5">
+                <div className="flex items-center gap-3">
+                  <div className="text-3xl">{uc.icon}</div>
+                  <div>
+                    <p className="font-black text-lg">{uc.role}</p>
+                    <span className="text-xs font-bold text-orange-500 tracking-widest">{uc.tag}</span>
+                  </div>
+                </div>
+              </div>
+
+              <p className="font-bold text-base text-white mb-2">{uc.headline}</p>
+              <p className="text-sm text-zinc-500 leading-relaxed mb-6">{uc.desc}</p>
+
+              <ul className="space-y-2">
+                {uc.points.map((point, j) => (
+                  <li key={j} className="flex items-center gap-2.5 text-sm text-zinc-400">
+                    <span className="w-5 h-5 bg-orange-500/15 text-orange-500 rounded flex items-center justify-center text-xs shrink-0">✓</span>
+                    {point}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
       </section>
 
       {/* CTA */}
-      <section className="bg-primary text-white px-20 py-16 text-center">
-        <h2 className="text-3xl font-semibold">
-          Start documenting your meetings the smart way
+      <section className="px-20 py-24 text-center relative overflow-hidden bg-[#0f0f0f] border-t border-zinc-900">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-64 bg-orange-500/10 blur-3xl rounded-full pointer-events-none" />
+        <h2 className="text-5xl font-black tracking-tight max-w-2xl mx-auto leading-tight relative z-10">
+          Start documenting your meetings <span className="text-orange-500">the smart way</span>
         </h2>
-        <button className="mt-6 bg-white text-dark px-6 py-3 rounded-lg">
-          Get Started Free
+        <button className="mt-10 bg-orange-500 hover:bg-orange-400 text-black font-black px-10 py-4 rounded-xl text-base transition-all hover:-translate-y-0.5 shadow-xl shadow-orange-500/30 relative z-10">
+          Get Started Free →
         </button>
       </section>
-
 
     </div>
   );
 };
-
-  
-
 
 export default HomePage;
