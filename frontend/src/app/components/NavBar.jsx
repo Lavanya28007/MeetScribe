@@ -62,6 +62,9 @@ const NavBar = () => {
                         <Link href="/history" className="text-zinc-400 hover:text-orange-500 transition-colors text-sm font-medium">
                             History
                         </Link>
+                        <Link href="/dashboard" className="text-zinc-400 hover:text-orange-500 transition-colors text-sm font-medium">
+                            Dashboard
+                        </Link>
                         <div className="relative">
                             <button
                                 onClick={() => setMenuOpen(o => !o)}

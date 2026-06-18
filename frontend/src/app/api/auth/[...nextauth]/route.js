@@ -22,6 +22,7 @@ callbacks: {
 
         return true;
       } catch (err) {
+        console.error("❌ Google login backend error:", err.message);
         return false;
       }
     }
